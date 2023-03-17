@@ -22,6 +22,3 @@ Route::resource('categories','CategoryController');
 
 // Transaction
 Route::resource('transactions','transactionController');
-
-// Mutation
-Route::resource('mutations','MutationController');

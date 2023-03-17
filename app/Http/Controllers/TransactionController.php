@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Transaction;
 use App\Category;
-use App\Mutation;
 use DB;
 use Illuminate\Http\Request;
 
@@ -52,15 +51,7 @@ class TransactionController extends Controller
             $transaction->desc = $request->get('desc');
 
             if($transaction->save()){
-                $mutation = new Mutation();
-                $mutation->transactions_id = $transaction->id;
-
-                if($mutation->save()){
-                    return redirect()->route('transactions.index')->with('status','Data transaksi berhasil disimpan');
-                }else{
-                    DB::table('transactions')->where('id','=',$transaction->id)->delete();
-                    return redirect()->route('transactions.index')->with('error', 'Data transaksi gagal disimpan, silahkan coba lagi');
-                }
+                return redirect()->route('transactions.index')->with('status','Data transaksi berhasil disimpan');
             }else{
                 return redirect()->route('transactions.index')->with('error', 'Data transaksi gagal disimpan, silahkan coba lagi');
             }
@@ -88,7 +79,8 @@ class TransactionController extends Controller
      */
     public function edit(Transaction $transaction)
     {
-        //
+        $categories = Category::orderBy('name','asc')->get();
+        return view('transaction.edit', compact('transaction','categories'));
     }
 
     /**
@@ -100,7 +92,22 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        //
+        try{
+             $transaction->date = $request->get('editDate');
+             $transaction->categories_id	= $request->get('editCategory');
+             $transaction->nominal = $request->get('editNominal');
+             $transaction->users_id = 1;
+             $transaction->desc = $request->get('editDesc');
+             $transaction->status = $request->get('editStatus');
+ 
+             if($transaction->save()){
+                 return redirect()->route('transactions.index')->with('status','Data transaksi berhasil diubah');
+             }else{
+                 return redirect()->route('transactions.index')->with('error', 'Data transaksi gagal diubah, silahkan coba lagi');
+             }
+         }catch(\PDOException $e){
+             return redirect()->route('transactions.index')->with('error', 'Data transaksi gagal diubah, silahkan coba lagi');
+         }
     }
 
     /**

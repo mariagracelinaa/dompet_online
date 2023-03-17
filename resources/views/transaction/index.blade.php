@@ -39,6 +39,8 @@
             <th>Kategori</th>
             <th>Jenis Transaksi</th>
             <th>Keterangan</th>
+            <th>Status</th>
+            <th style="width: 15%">Aksi</th>
         </tr>
     </thead>
     <tbody>
@@ -55,8 +57,17 @@
                 @if ($t->desc == NULL)
                     <td>-</td>
                 @else
-                    <td>{{$t->desc}}</td>
+                    <td>{{ucfirst($t->desc)}}</td>
                 @endif
+                <td>{{ucfirst($t->status)}}</td>
+                <td>
+                    <a href="{{url('transactions/'.$t->id.'/edit')}}" class="btn btn-warning btn-xs">Ubah</a>
+                    <form method="POST" action="{{url('transactions/'.$t->id)}}">
+                        @csrf
+                        @method('DELETE')
+                        <input type="submit" value="Hapus" class="btn btn-danger btn-xs" onclick="if(!confirm('Apakah anda yakin ingin menghapus data?')) return false">
+                    </form>
+                </td>
             </tr>
         @endforeach
     </tbody> 
