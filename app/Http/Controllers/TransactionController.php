@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Transaction;
+use App\Category;
+use App\Mutation;
+use DB;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -15,7 +18,8 @@ class TransactionController extends Controller
     public function index()
     {
         $transactions = Transaction::all();
-        return view('transaction.index', compact('transactions'));
+        $categories = Category::orderBy('name','asc')->get();
+        return view('transaction.index', compact('transactions','categories'));
     }
 
     /**
@@ -36,7 +40,33 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+           // masih tidak ada usernya, kalau ada user login untuk dapat id user nya pakai perintna Auth::user()->id;
+            $users_id = 1;
+
+            $transaction = new Transaction();
+            $transaction->date = $request->get('date');
+            $transaction->categories_id	= $request->get('category');
+            $transaction->nominal = $request->get('nominal');
+            $transaction->users_id = $users_id;
+            $transaction->desc = $request->get('desc');
+
+            if($transaction->save()){
+                $mutation = new Mutation();
+                $mutation->transactions_id = $transaction->id;
+
+                if($mutation->save()){
+                    return redirect()->route('transactions.index')->with('status','Data transaksi berhasil disimpan');
+                }else{
+                    DB::table('transactions')->where('id','=',$transaction->id)->delete();
+                    return redirect()->route('transactions.index')->with('error', 'Data transaksi gagal disimpan, silahkan coba lagi');
+                }
+            }else{
+                return redirect()->route('transactions.index')->with('error', 'Data transaksi gagal disimpan, silahkan coba lagi');
+            }
+        }catch(\PDOException $e){
+            return redirect()->route('transactions.index')->with('error', 'Data transaksi gagal disimpan, silahkan coba lagi');
+        }
     }
 
     /**

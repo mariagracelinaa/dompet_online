@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(UserSeeder::class);
         // $this->call(CategorySeeder::class);
         // $this->call(transactionSeeder::class);
-        $this->call(mutationSeeder::class);
+        // $this->call(mutationSeeder::class);
     }
 }
