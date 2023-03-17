@@ -18,6 +18,8 @@ class CreateTransactionsTable extends Migration
             $table->date('date')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->bigInteger('nominal');
             $table->string('desc')->nullable();
+            $table->enum('status',['diterima', 'ditolak', 'proses'])->default('proses');
+            $table->tinyInteger('is_deleted')->default(0);
         });
     }
 
