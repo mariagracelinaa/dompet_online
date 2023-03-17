@@ -16,7 +16,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transactions = Transaction::all();
+        $transactions = Transaction::orderBy('date','desc')->get();
         $categories = Category::orderBy('name','asc')->get();
         return view('transaction.index', compact('transactions','categories'));
     }
@@ -118,6 +118,55 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        try{
+            $transaction->delete();
+            return redirect()->route('transactions.index')->with('status','Data transaksi berhasil dihapus');
+        }catch(\PDOException $e){
+            return redirect()->route('transactions.index')->with('error','Data transaksi gagal dihapus, silahkan coba lagi');
+        }
+    }
+
+    public function dashboard(){
+        // Saldo Saat ini
+        $pemasukan = DB::table('transactions')
+                    ->join('categories','categories.id','=','transactions.categories_id')
+                    ->select(DB::raw('SUM(transactions.nominal) as pemasukan'))
+                    ->where('status','=','diterima')
+                    ->where('categories.type','=','pemasukan')
+                    ->get();
+        // dd($pemasukan);
+
+        $pengeluaran = DB::table('transactions')
+                    ->join('categories','categories.id','=','transactions.categories_id')
+                    ->select(DB::raw('SUM(transactions.nominal) as pengeluaran'))
+                    ->where('status','=','diterima')
+                    ->where('categories.type','=','pengeluaran')
+                    ->get();
+        // dd($pengeluaran[0]->pengeluaran);
+
+        $current_balance = ($pemasukan[0]->pemasukan - $pengeluaran[0]->pengeluaran);
+
+        // Transaksi yang belum konfirmasi
+        $transactions_process = Transaction::where('status','=','proses')->get();
+
+        // pengeluaran, pemasukan per kategori (dalam 1 tahun)
+        $curr_year = date('Y');
+        $last_year = $curr_year - 1;
+        // $pengeluaran_tahunan = DB::table('transactions')
+        //             ->join('categories','categories.id','=','transactions.categories_id')
+        //             ->select('categories.name', DB::raw('SUM(transactions.nominal) as pengeluaran'))
+        //             ->where(DB::raw('YEAR(transactions.date)'),'=',$curr_year)
+        //             ->orWhere(DB::raw('YEAR(transactions.date)'),'=', $last_year)
+        //             ->where('status','=','diterima')
+        //             ->where('categories.type','=','pengeluaran')
+        //             ->groupBy('categories.name')
+        //             ->get();
+        // dd($pengeluaran_tahunan);
+        $pengeluaran_tahunan = 1;
+        $pemasukan_tahunan = 1;
+        
+        return view('dashboard', compact('current_balance','transactions_process','pengeluaran_tahunan','pemasukan_tahunan'));
+
+        // 
     }
 }

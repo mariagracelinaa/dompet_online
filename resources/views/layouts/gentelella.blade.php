@@ -61,6 +61,7 @@
                   <ul class="nav side-menu">
                     <li><a><i class="fa fa-database"></i> Data<span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu">
+                        <li><a href="{{url('/dashboard')}}">Beranda</a></li>
                         <li><a href="{{url('/transactions')}}">Daftar Transaksi</a></li>
                         <li><a href="{{url('/categories')}}">Daftar Kategori</a></li>
                       </ul>

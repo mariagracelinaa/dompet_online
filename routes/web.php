@@ -12,13 +12,19 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes();
 
-Route::get('/', function () {
-    return view('layouts.gentelella');
-});
+Route::get('/home', 'HomeController@index')->name('home');
+
+// Route::get('/', function () {
+//     return view('layouts.gentelella');
+// });
 
 // Category
 Route::resource('categories','CategoryController');
 
 // Transaction
-Route::resource('transactions','transactionController');
+Route::resource('transactions','TransactionController');
+
+// Dashboard
+Route::get('/dashboard','TransactionController@dashboard');

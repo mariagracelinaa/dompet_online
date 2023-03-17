@@ -19,7 +19,6 @@ class CreateTransactionsTable extends Migration
             $table->bigInteger('nominal');
             $table->string('desc')->nullable();
             $table->enum('status',['diterima', 'proses'])->default('proses');
-            $table->tinyInteger('is_deleted')->default(0);
         });
     }
 
