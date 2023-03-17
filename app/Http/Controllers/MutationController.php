@@ -14,7 +14,8 @@ class MutationController extends Controller
      */
     public function index()
     {
-        //
+        $mutations = Mutation::all();
+        return view('mutation.index', compact('mutations'));
     }
 
     /**

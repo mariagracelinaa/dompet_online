@@ -16,3 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('layouts.gentelella');
 });
+
+// Category
+Route::resource('categories','CategoryController');
+
+// Transaction
+Route::resource('transactions','transactionController');
+
+// Mutation
+Route::resource('mutations','MutationController');

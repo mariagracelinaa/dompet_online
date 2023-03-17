@@ -11,6 +11,12 @@ class mutationSeeder extends Seeder
      */
     public function run()
     {
-        //
+        DB::table('mutations')->insert([
+            'transactions_id' => 1,
+        ]);
+
+        DB::table('mutations')->insert([
+            'transactions_id' => 2,
+        ]);
     }
 }
